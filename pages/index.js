@@ -4,8 +4,9 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
 import clientCredentials from '../credentials/client'
+import Frame from '../components/frame.js'
 
-export async function getServerSideProps({ req, query }) {
+export async function getServerSideProps( req ) {
   const user = req && req.session ? req.session.decodedToken : null
   // don't fetch anything from firebase if the user is not found
   // const snap = user && await req.firebaseServer.database().ref('messages').once('value')
@@ -123,18 +124,20 @@ export default class Index extends Component {
         {user ? (
           <button onClick={this.handleLogout}>Logout</button>
         ) : (
-          <button onClick={this.handleLogin}>Login</button>
+          <button onClick={this.handleLogin}>Google Account Login</button>
         )}
         {user && (
           <div>
+            <Frame/>
             <form onSubmit={this.handleSubmit}>
               <input
                 type={'text'}
                 onChange={this.handleChange}
-                placeholder={'add message...'}
+                placeholder={'Comment'}
                 value={value}
               />
             </form>
+            
             <ul>
               {messages &&
                 Object.keys(messages).map(key => (
@@ -143,6 +146,22 @@ export default class Index extends Component {
             </ul>
           </div>
         )}
+<style jsx>{`
+            .grid{
+                display:flex;
+                flex-wrap:wrap;
+                justify-content:flex-start;
+            }
+            .grid-card{
+                margin:10px 10px;
+            }
+            @media only screen and (max-width:768px){
+                .grid{
+                    justify-content:center
+                }
+            }
+        `}</style>
+
       </div>
     )
   }
