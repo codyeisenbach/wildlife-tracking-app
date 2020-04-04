@@ -5,6 +5,7 @@ import 'firebase/firestore'
 import 'isomorphic-unfetch'
 import clientCredentials from '../credentials/client'
 import Frame from '../components/frame.js'
+import UploadFile from '../components/upload-file'
 
 export async function getServerSideProps( req ) {
   const user = req && req.session ? req.session.decodedToken : null
@@ -95,6 +96,19 @@ export default class Index extends Component {
     this.setState({ value: event.target.value })
   }
 
+  handlePicSubmit(event) {
+    event.preventDefault()
+    var db = firebase.firestore()
+    const date = new Date().getTime()
+    db.collection('uploads')
+      .doc(`${date}`)
+      .set({
+        id: date,
+        text: this.state.value,
+      })
+    this.setState({ value: '' })
+  }
+
   handleSubmit(event) {
     event.preventDefault()
     var db = firebase.firestore()
@@ -128,7 +142,7 @@ export default class Index extends Component {
         )}
         {user && (
           <div>
-            <Frame/>
+            <Frame className="grid"/>
             <form onSubmit={this.handleSubmit}>
               <input
                 type={'text'}
@@ -137,7 +151,8 @@ export default class Index extends Component {
                 value={value}
               />
             </form>
-            
+            <h1>{user.name}</h1>
+                    <UploadFile uid={user.uid} />
             <ul>
               {messages &&
                 Object.keys(messages).map(key => (
@@ -161,7 +176,6 @@ export default class Index extends Component {
                 }
             }
         `}</style>
-
       </div>
     )
   }
